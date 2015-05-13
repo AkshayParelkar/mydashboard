@@ -1,5 +1,16 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	h1
+		the top hn stories are
+
+	ul
+		for item in items
+			li= item.title
+
+	div.hnnews
+
+
+	div.hnask
+
+	div.email
