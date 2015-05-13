@@ -1,15 +1,14 @@
 extends layout
 
 block content
-	h1
+	div.hnnews
+		h1
 		the top hn stories are
 
-	ul
-		for item in items
-			li= item.title
-
-	div.hnnews
-
+		ul
+			for item in items
+				li
+					a(href=item.url) #{item.title}
 
 	div.hnask
 

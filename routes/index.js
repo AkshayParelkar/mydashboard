@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var https = require('https');
+var http = require('http');
 var numhntopstories = 10;
 var requestsync = require('urllib-sync').request;
 
@@ -57,7 +58,30 @@ router.get('/', function(req, res, next) {
         var storyIdsJSON = JSON.parse(storyIds); 
         //console.log('storyIdsJSON'); 
         //console.log(storyIdsJSON);
+        storyIdsJSON = storyIdsJSON.splice(0, numhntopstories);
+        console.log(storyIdsJSON);
+        var completed_requests = 0;
         var storyJSON = [];
+        var responses = [];
+        var disp = res;
+        storyIdsJSON.forEach(function(storyId) {
+        	url = hnapi.base + JSON.stringify(storyId) + '.json';
+        	//console.log(url);
+        	https.get(url, function(res) {
+        		res.on('data', function(chunk) {
+        			responses.push(JSON.parse(chunk.toString()));
+        			//console.log(chunk.toString());
+        		});
+
+        		res.on('end', function() {
+        			if (completed_requests++ == numhntopstories - 1) {
+        				console.log('body:', responses.join());
+        				disp.render('index', {items: responses});
+        			}
+        		});
+        	});
+        });
+        /*
         for (var i = 0; i < 10; i++) {
         	storyId = storyIdsJSON[i];
         	var res = requestsync(hnapi.base + JSON.stringify(storyId) + '.json');
@@ -66,6 +90,8 @@ router.get('/', function(req, res, next) {
         };
 		console.log(storyJSON);
         disp.render('index', { items: storyJSON })
+    	*/
+
     });
 });
 
